@@ -7,19 +7,27 @@ import { defaultFoods, offersData as initialOffers, recipesData } from './data.j
 // ----------------------------------------------------
 let foodsData = JSON.parse(localStorage.getItem('my_foods')) || defaultFoods;
 let offersData = JSON.parse(localStorage.getItem('my_offers')) || initialOffers;
-let profileData = JSON.parse(localStorage.getItem('my_profile')) || { name: 'Maria', tag: 'Consumidor Consciente 🌿' };
+let profileData = JSON.parse(localStorage.getItem('my_profile')) || null;
 let favoriteRecipeIds = JSON.parse(localStorage.getItem('my_favorite_recipes')) || [];
 let totalSavedMoney = parseFloat(localStorage.getItem('my_saved_money')) || 0.00;
 let savedItemsCount = parseInt(localStorage.getItem('my_saved_items_count')) || 0;
 
-// Estado do Modo Vendedor & Mercado Parceiro
 let isSellerMode = JSON.parse(localStorage.getItem('my_seller_mode')) || false;
 let marketData = JSON.parse(localStorage.getItem('my_market_data')) || null;
 
+// Filtros de Inventário
 let currentFilter = 'Todos';
-let currentRecipeFilter = 'todas';
-let currentOfferFilter = 'Todos';
 let searchQuery = '';
+
+// Filtros de Ofertas
+let currentOfferFilter = 'Todos';
+let offerSearchQuery = '';
+
+// Filtros de Receitas
+let currentRecipeFilter = 'todas';
+let recipeTypeFilter = 'todos'; // 'todos', 'salgado', 'doce'
+let recipeSearchQuery = '';
+
 let selectedOffer = null;
 let currentViewingRecipe = null;
 
@@ -29,7 +37,11 @@ let currentViewingRecipe = null;
 function saveState() {
   localStorage.setItem('my_foods', JSON.stringify(foodsData));
   localStorage.setItem('my_offers', JSON.stringify(offersData));
-  localStorage.setItem('my_profile', JSON.stringify(profileData));
+  if (profileData) {
+    localStorage.setItem('my_profile', JSON.stringify(profileData));
+  } else {
+    localStorage.removeItem('my_profile');
+  }
   localStorage.setItem('my_favorite_recipes', JSON.stringify(favoriteRecipeIds));
   localStorage.setItem('my_saved_money', totalSavedMoney.toFixed(2));
   localStorage.setItem('my_saved_items_count', savedItemsCount.toString());
@@ -39,9 +51,70 @@ function saveState() {
 }
 
 // ----------------------------------------------------
-// PERFIL & MODO ESTABELECIMENTO PARCEIRO
+// NOTIFICAÇÕES NATIVAS DO NAVEGADOR / CELULAR
 // ----------------------------------------------------
+function requestNotificationPermission() {
+  if ('Notification' in window) {
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        alert('Notificações ativadas com sucesso! Você receberá alertas do navegador para alimentos a vencer.');
+        triggerExpiryNotifications();
+      } else {
+        alert('Permissão de notificação foi negada ou bloqueada no navegador.');
+      }
+    });
+  } else {
+    alert('Seu navegador não suporta a Web Notifications API.');
+  }
+}
+
+function triggerExpiryNotifications() {
+  if ('Notification' in window && Notification.permission === 'granted') {
+    const expiringFoods = foodsData.filter(food => {
+      const days = calculateDaysToExpiry(food.expiryDate);
+      return days >= 0 && days <= 2;
+    });
+
+    if (expiringFoods.length > 0) {
+      const foodNames = expiringFoods.map(f => f.name).join(', ');
+      new Notification('⚠️ Alerta de Validade - Menos Desperdício', {
+        body: `Você tem ${expiringFoods.length} alimento(s) a vencer nos próximos dias: ${foodNames}. Confira as receitas!`,
+        icon: '🥬'
+      });
+    }
+  }
+}
+
+document.getElementById('enable-notifications-btn')?.addEventListener('click', requestNotificationPermission);
+
+// ----------------------------------------------------
+// PRIMEIRO ACESSO (ONBOARDING) & PERFIL
+// ----------------------------------------------------
+function checkFirstAccess() {
+  const onboardingModal = document.getElementById('onboarding-modal');
+  if (!profileData) {
+    onboardingModal?.classList.remove('hidden');
+  } else {
+    onboardingModal?.classList.add('hidden');
+  }
+}
+
+document.getElementById('onboarding-form')?.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  profileData = {
+    name: document.getElementById('onboarding-name').value,
+    tag: document.getElementById('onboarding-tag').value
+  };
+
+  saveState();
+  updateProfileStats();
+  document.getElementById('onboarding-modal')?.classList.add('hidden');
+});
+
 function updateProfileStats() {
+  if (!profileData) return;
+
   const homeGreeting = document.getElementById('home-greeting');
   const profileNameDisplay = document.getElementById('profile-name-display');
   const profileTagDisplay = document.getElementById('profile-tag-display');
@@ -58,7 +131,6 @@ function updateProfileStats() {
   if (statMoneySaved) statMoneySaved.textContent = `R$ ${totalSavedMoney.toFixed(2).replace('.', ',')}`;
   if (statRecipesCount) statRecipesCount.textContent = recipesData.length;
 
-  // Atualização da Interface do Modo Vendedor
   const toggleSellerMode = document.getElementById('toggle-seller-mode');
   const sellerDashboard = document.getElementById('seller-dashboard');
   const openAddOfferBtnHeader = document.getElementById('open-add-offer-modal-btn');
@@ -82,7 +154,6 @@ function updateProfileStats() {
   }
 }
 
-// Alternar Modo Vendedor no Perfil
 document.getElementById('toggle-seller-mode')?.addEventListener('change', (e) => {
   isSellerMode = e.target.checked;
 
@@ -94,7 +165,6 @@ document.getElementById('toggle-seller-mode')?.addEventListener('change', (e) =>
   }
 });
 
-// Modal do Cadastro do Mercado
 const registerMarketModal = document.getElementById('register-market-modal');
 const registerMarketForm = document.getElementById('register-market-form');
 
@@ -286,13 +356,14 @@ foodForm?.addEventListener('submit', (e) => {
   saveState();
   renderInventory();
   renderRecipes();
+  triggerExpiryNotifications();
 
   foodForm.reset();
   foodModal?.classList.add('hidden');
 });
 
 // ----------------------------------------------------
-// OFERTAS & GOOGLE MAPS
+// OFERTAS (PESQUISA AVANÇADA POR PRODUTO/MERCADO)
 // ----------------------------------------------------
 function renderOffers() {
   const container = document.getElementById('offer-list');
@@ -300,12 +371,14 @@ function renderOffers() {
   container.innerHTML = '';
 
   const filteredOffers = offersData.filter(offer => {
-    if (currentOfferFilter === 'Todos') return true;
-    return offer.category === currentOfferFilter;
+    const matchesCategory = currentOfferFilter === 'Todos' || offer.category === currentOfferFilter;
+    const query = offerSearchQuery.toLowerCase();
+    const matchesSearch = offer.title.toLowerCase().includes(query) || offer.market.toLowerCase().includes(query);
+    return matchesCategory && matchesSearch;
   });
 
   if (filteredOffers.length === 0) {
-    container.innerHTML = '<p style="text-align:center; color:#888; margin-top:30px; font-size: 13px;">Nenhuma oferta nesta categoria.</p>';
+    container.innerHTML = '<p style="text-align:center; color:#888; margin-top:30px; font-size: 13px;">Nenhuma oferta encontrada para esta busca.</p>';
     return;
   }
 
@@ -329,6 +402,11 @@ function renderOffers() {
     container.appendChild(card);
   });
 }
+
+document.getElementById('offer-search-input')?.addEventListener('input', (e) => {
+  offerSearchQuery = e.target.value;
+  renderOffers();
+});
 
 function openOfferModal(offer) {
   selectedOffer = offer;
@@ -426,7 +504,7 @@ document.getElementById('close-offer-modal-btn')?.addEventListener('click', () =
   document.getElementById('offer-modal')?.classList.add('hidden');
 });
 
-// Cadastro de Produto pelo Mercado Parceiro
+// Cadastro de Oferta pelo Mercado
 const addOfferModal = document.getElementById('add-offer-modal');
 const partnerOfferForm = document.getElementById('partner-offer-form');
 
@@ -489,7 +567,7 @@ partnerOfferForm?.addEventListener('submit', (e) => {
 });
 
 // ----------------------------------------------------
-// RECEITAS & FAVORITOS
+// RECEITAS (FILTRAGEM POR TIPO DOCE/SALGADO E BUSCA)
 // ----------------------------------------------------
 function userHasIngredient(keyword) {
   if (!keyword) return true;
@@ -524,14 +602,25 @@ function renderRecipes() {
     const match = getRecipeMatchInfo(recipe);
     const isFav = favoriteRecipeIds.includes(recipe.id);
 
-    if (currentRecipeFilter === 'posso-fazer') return match.isComplete;
-    if (currentRecipeFilter === 'vencendo') return match.usesExpiring;
-    if (currentRecipeFilter === 'favoritas') return isFav;
-    return true;
+    // Filtro por termo digitado
+    const query = recipeSearchQuery.toLowerCase();
+    const matchesSearch = recipe.title.toLowerCase().includes(query) ||
+      recipe.ingredients.some(ing => ing.name.toLowerCase().includes(query));
+
+    // Filtro por tipo (Salgado / Doce)
+    const matchesType = recipeTypeFilter === 'todos' || recipe.type === recipeTypeFilter;
+
+    // Filtro por aba selecionada
+    let matchesTab = true;
+    if (currentRecipeFilter === 'posso-fazer') matchesTab = match.isComplete;
+    if (currentRecipeFilter === 'vencendo') matchesTab = match.usesExpiring;
+    if (currentRecipeFilter === 'favoritas') matchesTab = isFav;
+
+    return matchesSearch && matchesType && matchesTab;
   });
 
   if (filteredRecipes.length === 0) {
-    container.innerHTML = '<p style="text-align:center; color:#888; margin-top:30px; font-size: 13px;">Nenhuma receita atende aos filtros atuais.</p>';
+    container.innerHTML = '<p style="text-align:center; color:#888; margin-top:30px; font-size: 13px;">Nenhuma receita encontrada para os filtros selecionados.</p>';
     return;
   }
 
@@ -549,7 +638,7 @@ function renderRecipes() {
       <div class="recipe-card-icon">${recipe.icon}</div>
       <div class="recipe-card-info">
         <div class="recipe-card-title">${recipe.title}</div>
-        <div class="recipe-card-meta">⏱️ ${recipe.time} • ${recipe.difficulty}</div>
+        <div class="recipe-card-meta">⏱️ ${recipe.time} • ${recipe.difficulty} • ${recipe.type === 'doce' ? '🍰 Doce' : '🍕 Salgado'}</div>
         <span class="recipe-availability ${tagClass}">${tagText}</span>
       </div>
       <button class="fav-btn" data-id="${recipe.id}">${isFav ? '❤️' : '🤍'}</button>
@@ -564,6 +653,20 @@ function renderRecipes() {
     container.appendChild(card);
   });
 }
+
+document.getElementById('recipe-search-input')?.addEventListener('input', (e) => {
+  recipeSearchQuery = e.target.value;
+  renderRecipes();
+});
+
+document.querySelectorAll('.type-pill-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    document.querySelectorAll('.type-pill-btn').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    recipeTypeFilter = e.target.getAttribute('data-type-filter');
+    renderRecipes();
+  });
+});
 
 function toggleFavoriteRecipe(id) {
   if (favoriteRecipeIds.includes(id)) {
@@ -714,8 +817,10 @@ document.getElementById('reset-app-btn')?.addEventListener('click', () => {
 
 const profileModal = document.getElementById('profile-modal');
 document.getElementById('open-edit-profile-btn')?.addEventListener('click', () => {
-  document.getElementById('edit-profile-name').value = profileData.name;
-  document.getElementById('edit-profile-tag').value = profileData.tag;
+  if (profileData) {
+    document.getElementById('edit-profile-name').value = profileData.name;
+    document.getElementById('edit-profile-tag').value = profileData.tag;
+  }
   profileModal?.classList.remove('hidden');
 });
 
@@ -725,19 +830,23 @@ document.getElementById('close-profile-modal-btn')?.addEventListener('click', ()
 
 document.getElementById('profile-form')?.addEventListener('submit', (e) => {
   e.preventDefault();
-  profileData.name = document.getElementById('edit-profile-name').value;
-  profileData.tag = document.getElementById('edit-profile-tag').value;
+  profileData = {
+    name: document.getElementById('edit-profile-name').value,
+    tag: document.getElementById('edit-profile-tag').value
+  };
   saveState();
   updateProfileStats();
   profileModal?.classList.add('hidden');
 });
 
 // ----------------------------------------------------
-// INICIALIZAÇÃO
+// INICIALIZAÇÃO DA APLICAÇÃO
 // ----------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
+  checkFirstAccess();
   renderInventory();
   renderRecipes();
   renderOffers();
   updateProfileStats();
+  triggerExpiryNotifications();
 });

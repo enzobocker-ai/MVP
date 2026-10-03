@@ -784,3 +784,46 @@ input:checked + .slider {
 input:checked + .slider:before {
   transform: translateX(22px);
 }
+/* FILTROS ADICIONAIS DE RECEITAS (DOCE / SALGADO) */
+.filter-controls-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.type-pill-selector {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.type-pill-selector::-webkit-scrollbar { display: none; }
+
+.type-pill-btn {
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.type-pill-btn.active {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+body.dark-theme .type-pill-btn {
+  background: #2d3748;
+}
+
+body.dark-theme .type-pill-btn.active {
+  background: var(--primary-light);
+  color: var(--primary);
+}

@@ -1,178 +1,209 @@
 // js/data.js
 
 export const defaultFoods = [
-  { id: '1', name: 'Alface crespa', quantity: 1, unit: 'maço', expiryDate: '2026-10-05', location: 'Na geladeira', icon: '🥬' },
-  { id: '2', name: 'Tomate italiano', quantity: 500, unit: 'g', expiryDate: '2026-10-08', location: 'Na geladeira', icon: '🍅' },
-  { id: '3', name: 'Banana prata', quantity: 6, unit: 'un', expiryDate: '2026-10-06', location: 'Na fruteira', icon: '🍌' },
-  { id: '4', name: 'Iogurte natural', quantity: 2, unit: 'un', expiryDate: '2026-10-07', location: 'Na geladeira', icon: '🥛' },
-  { id: '5', name: 'Pão de forma tradicional', quantity: 1, unit: 'un', expiryDate: '2026-10-10', location: 'Na despensa', icon: '🍞' },
-  { id: '6', name: 'Queijo muçarela fatiado', quantity: 200, unit: 'g', expiryDate: '2026-10-13', location: 'Na geladeira', icon: '🧀' },
-  { id: '7', name: 'Ovos caipiras', quantity: 12, unit: 'un', expiryDate: '2026-10-20', location: 'Na geladeira', icon: '🥚' },
-  { id: '8', name: 'Peito de frango', quantity: 1, unit: 'kg', expiryDate: '2026-10-07', location: 'Na geladeira', icon: '🥩' }
+  { id: '1', name: 'Tomate', quantity: 4, unit: 'un', expiryDate: '2026-10-06', location: 'Na geladeira', icon: '🍅' },
+  { id: '2', name: 'Leite Integral', quantity: 1, unit: 'L', expiryDate: '2026-10-05', location: 'Na geladeira', icon: '🥛' },
+  { id: '3', name: 'Pão de Forma', quantity: 6, unit: 'fatia', expiryDate: '2026-10-08', location: 'Na despensa', icon: '🍞' },
+  { id: '4', name: 'Banana Prata', quantity: 5, unit: 'un', expiryDate: '2026-10-04', location: 'Na fruteira', icon: '🍌' },
+  { id: '5', name: 'Queijo Muçarela', quantity: 200, unit: 'g', expiryDate: '2026-10-10', location: 'Na geladeira', icon: '🧀' }
 ];
 
 export const offersData = [
   {
     id: 'o1',
-    title: 'Tomate Italiano',
-    market: 'Mercado Boa Compra',
-    distance: '1,2 km',
-    price: 2.99,
-    oldPrice: 4.99,
-    discount: '-40%',
-    validity: '08/10/2026',
-    weight: '500g',
+    title: 'Tomate Italiano Lote Promocional',
+    market: 'Supermercado Fort Atacadista',
+    distance: 'Trindade • 1.2 km',
+    mapsLink: 'https://maps.google.com',
+    price: 3.49,
+    oldPrice: 6.99,
+    discount: '-50%',
+    validity: '2026-10-08',
+    weight: '1 kg',
     category: 'Frutas e verduras',
-    icon: '🍅',
-    lat: -27.5954,
-    lng: -48.5480
+    icon: '🍅'
   },
   {
     id: 'o2',
-    title: 'Iogurte Natural 170g',
-    market: 'Supermercado Mais',
-    distance: '2,5 km',
-    price: 3.49,
-    oldPrice: 4.99,
-    discount: '-30%',
-    validity: '07/10/2026',
-    weight: '170g',
+    title: 'Leite Fermentado 6un',
+    market: 'Bistek Supermercados',
+    distance: 'Costeira • 2.5 km',
+    mapsLink: 'https://maps.google.com',
+    price: 4.50,
+    oldPrice: 8.90,
+    discount: '-49%',
+    validity: '2026-10-07',
+    weight: '480g',
     category: 'Laticínios',
-    icon: '🥛',
-    lat: -27.5862,
-    lng: -48.5225
+    icon: '🥛'
   },
   {
     id: 'o3',
-    title: 'Pão de Forma Integral',
-    market: 'Mercado Bom Vizinho',
-    distance: '3,1 km',
-    price: 4.99,
-    oldPrice: 9.99,
-    discount: '-50%',
-    validity: '10/10/2026',
-    weight: '400g',
+    title: 'Pão Francês Fresquinho Lote Tarde',
+    market: 'Padaria Tradição da Ilha',
+    distance: 'Centro • 0.8 km',
+    mapsLink: 'https://maps.google.com',
+    price: 5.00,
+    oldPrice: 12.00,
+    discount: '-58%',
+    validity: '2026-10-05',
+    weight: '500g',
     category: 'Padaria',
-    icon: '🍞',
-    lat: -27.5910,
-    lng: -48.5710
+    icon: '🥖'
   },
   {
     id: 'o4',
-    title: 'Queijo Muçarela Peça',
-    market: 'Supermercado Mais',
-    distance: '2,5 km',
-    price: 4.54,
-    oldPrice: 6.99,
-    discount: '-35%',
-    validity: '13/10/2026',
-    weight: '200g',
-    category: 'Laticínios',
-    icon: '🧀',
-    lat: -27.5862,
-    lng: -48.5225
+    title: 'Peito de Frango Refrimado',
+    market: 'Hipermercado Angeloni',
+    distance: 'Agronômica • 3.1 km',
+    mapsLink: 'https://maps.google.com',
+    price: 11.90,
+    oldPrice: 19.90,
+    discount: '-40%',
+    validity: '2026-10-09',
+    weight: '1 kg',
+    category: 'Carnes e Frios',
+    icon: '🥩'
   },
   {
     id: 'o5',
-    title: 'Bife de Peito de Frango',
-    market: 'Açougue & Mercado Lagoa',
-    distance: '4,8 km',
-    price: 12.90,
-    oldPrice: 18.90,
-    discount: '-31%',
-    validity: '07/10/2026',
-    weight: '1kg',
-    category: 'Carnes e Frios',
-    icon: '🥩',
-    lat: -27.6080,
-    lng: -48.4670
+    title: 'Banana Caturra Bem Madura',
+    market: 'Sacolão Direto do Campo',
+    distance: 'Itacorubi • 1.7 km',
+    mapsLink: 'https://maps.google.com',
+    price: 2.19,
+    oldPrice: 4.99,
+    discount: '-56%',
+    validity: '2026-10-06',
+    weight: '1 kg',
+    category: 'Frutas e verduras',
+    icon: '🍌'
   }
 ];
 
 export const recipesData = [
   {
     id: 'r1',
-    title: 'Salada de folhas com tomate e queijo',
-    time: '15 min',
+    title: 'Omelete Nutritiva de Talos e Sobras',
+    icon: '🍳',
+    time: '10 min',
     difficulty: 'Fácil',
-    icon: '🥗',
+    type: 'salgado',
     ingredients: [
-      { name: 'Alface', qty: '1 maço', matchKeyword: 'alface' },
-      { name: 'Tomate', qty: '2 unidades', matchKeyword: 'tomate' },
-      { name: 'Queijo muçarela', qty: '100 g', matchKeyword: 'queijo' },
-      { name: 'Azeite e sal', qty: 'a gosto', matchKeyword: null }
+      { name: 'Ovos', qty: '2 unidades', matchKeyword: 'ovo' },
+      { name: 'Tomate picado', qty: '1 unidade', matchKeyword: 'tomate' },
+      { name: 'Queijo ou frios picados', qty: '50g', matchKeyword: 'queijo' }
     ],
     steps: [
-      'Lave bem as folhas de alface e corte em pedaços médios.',
-      'Corte os tomates e o queijo em cubos.',
-      'Junte tudo em uma tigela e tempere com azeite e sal a gosto.'
+      'Bata os ovos em uma tigela com uma pitada de sal e pimenta.',
+      'Adicione o tomate e o queijo picados.',
+      'Despeje em uma frigideira untada em fogo médio até dourar os dois lados.'
     ]
   },
   {
     id: 'r2',
-    title: 'Panqueca prática de banana',
-    time: '10 min',
+    title: 'Doce Cremoso de Casca de Banana',
+    icon: '🍌',
+    time: '25 min',
     difficulty: 'Fácil',
-    icon: '🥞',
+    type: 'doce',
     ingredients: [
-      { name: 'Banana', qty: '2 unidades', matchKeyword: 'banana' },
-      { name: 'Ovos', qty: '2 unidades', matchKeyword: 'ovo' },
-      { name: 'Canela em pó', qty: '1 pitada', matchKeyword: null }
+      { name: 'Bananas bem maduras (com casca)', qty: '4 unidades', matchKeyword: 'banana' },
+      { name: 'Açúcar ou Adoçante', qty: '1/2 xícara', matchKeyword: null },
+      { name: 'Canela em pó', qty: '1 colher de chá', matchKeyword: null }
     ],
     steps: [
-      'Amasse as bananas maduras com um garfo.',
-      'Misture bem com os ovos batidos.',
-      'Despeje em uma frigideira até dourar os dois lados.'
+      'Lave bem as cascas de banana e corte em tiras finas.',
+      'Lève ao fogo baixo com o açúcar e um pouco de água.',
+      'Cozinhe mexendo sempre até virar uma geleia consistente e finalize com canela.'
     ]
   },
   {
     id: 'r3',
-    title: 'Torta de legumes e queijo',
-    time: '40 min',
-    difficulty: 'Média',
-    icon: '🥧',
+    title: 'Torradas Temperadas com Pão Dormido',
+    icon: '🍞',
+    time: '15 min',
+    difficulty: 'Fácil',
+    type: 'salgado',
     ingredients: [
-      { name: 'Tomate', qty: '2 unidades', matchKeyword: 'tomate' },
-      { name: 'Queijo muçarela', qty: '150 g', matchKeyword: 'queijo' },
-      { name: 'Iogurte natural', qty: '1 xícara', matchKeyword: 'iogurte' }
+      { name: 'Pão de forma ou pão francês dormido', qty: '4 fatias', matchKeyword: 'pão' },
+      { name: 'Azeite ou Manteiga', qty: '2 colheres de sopa', matchKeyword: null },
+      { name: 'Orégano e Ervas', qty: 'A gosto', matchKeyword: null }
     ],
     steps: [
-      'Pique todos os legumes e o queijo.',
-      'Misture com a massa e leve ao forno por 30 minutos.'
+      'Corte o pão em cubos ou fatias finas.',
+      'Pincele azeite e polvilhe orégano e sal.',
+      'Lève ao forno pré-aquecido a 180°C por 10 minutos até ficas bem crocantes.'
     ]
   },
   {
     id: 'r4',
-    title: 'Frango grelhado com tomate e queijo',
-    time: '25 min',
-    difficulty: 'Fácil',
-    icon: '🍗',
+    title: 'Smoothie Proteico de Frutas Maduras',
+    icon: '🥤',
+    time: '5 min',
+    difficulty: 'Muito Fácil',
+    type: 'doce',
     ingredients: [
-      { name: 'Peito de frango', qty: '500 g', matchKeyword: 'frango' },
-      { name: 'Tomate', qty: '1 unidade', matchKeyword: 'tomate' },
-      { name: 'Queijo muçarela', qty: '2 fatias', matchKeyword: 'queijo' }
+      { name: 'Banana congelada ou madura', qty: '2 unidades', matchKeyword: 'banana' },
+      { name: 'Leite', qty: '200ml', matchKeyword: 'leite' }
     ],
     steps: [
-      'Tempere os filés de frango com sal e alho.',
-      'Grelhe em uma frigideira até dourar.',
-      'Coloque uma fatia de tomate e o queijo por cima até derreter.'
+      'Coloque as bananas e o leite no liquidificador.',
+      'Bata em velocidade alta por 2 minutos até ficar cremoso e homogêneo.',
+      'Sirva gelado imediatamente.'
     ]
   },
   {
     id: 'r5',
-    title: 'Omelete cremosa com queijo e hortaliças',
-    time: '10 min',
-    difficulty: 'Fácil',
-    icon: '🍳',
+    title: 'Sopa Cremosa de Legumes Sustentável',
+    icon: '🍲',
+    time: '30 min',
+    difficulty: 'Média',
+    type: 'salgado',
     ingredients: [
-      { name: 'Ovos', qty: '3 unidades', matchKeyword: 'ovo' },
-      { name: 'Queijo muçarela', qty: '50 g', matchKeyword: 'queijo' },
-      { name: 'Alface ou verdura picada', qty: '1 xícara', matchKeyword: 'alface' }
+      { name: 'Tomate', qty: '2 unidades', matchKeyword: 'tomate' },
+      { name: 'Batata ou Mandioca', qty: '2 unidades', matchKeyword: null },
+      { name: 'Queijo ralado para finalizar', qty: 'A gosto', matchKeyword: 'queijo' }
     ],
     steps: [
-      'Bata os ovos em uma tigela com uma pitada de sal.',
-      'Despeje na frigideira quente e adicione o queijo e as verduras.',
-      'Dobre ao meio e sirva imediatamente.'
+      'Cozinhe todos os legumes em água temperada com sal e alho.',
+      'Bata no liquidificador com a própria água do cozimento.',
+      'Volte para a panela, acerte o tempero e sirva com queijo por cima.'
+    ]
+  },
+  {
+    id: 'r6',
+    title: 'Bolinho de Arroz com Queijo',
+    icon: '🧆',
+    time: '20 min',
+    difficulty: 'Fácil',
+    type: 'salgado',
+    ingredients: [
+      { name: 'Sobras de Arroz cozido', qty: '2 xícaras', matchKeyword: null },
+      { name: 'Ovos', qty: '1 unidade', matchKeyword: 'ovo' },
+      { name: 'Queijo muçarela picado', qty: '100g', matchKeyword: 'queijo' }
+    ],
+    steps: [
+      'Misture o arroz, o ovo e o queijo em uma tigela.',
+      'Amasse bem até dar liga e forme pequenas bolinhas com as mãos.',
+      'Asse na Airfryer por 15 minutos a 180°C ou frite até dourar.'
+    ]
+  },
+  {
+    id: 'r7',
+    title: 'Mousse Express de Maçã e Banana',
+    icon: '🍧',
+    time: '10 min',
+    difficulty: 'Fácil',
+    type: 'doce',
+    ingredients: [
+      { name: 'Bananas bem maduras', qty: '3 unidades', matchKeyword: 'banana' },
+      { name: 'Leite', qty: '100ml', matchKeyword: 'leite' }
+    ],
+    steps: [
+      'Bata as bananas no processador até virar um purê liso.',
+      'Adicione o leite aos poucos e bata até aerar.',
+      'Leve à geladeira por 30 minutos antes de servir.'
     ]
   }
 ];

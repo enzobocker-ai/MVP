@@ -17,7 +17,7 @@
       <header class="header">
         <div class="user-greeting">
           <div>
-            <p class="greeting-subtitle" id="home-greeting">Olá, Maria!</p>
+            <p class="greeting-subtitle" id="home-greeting">Olá!</p>
             <h1 class="greeting-title">Meus alimentos</h1>
           </div>
           <button id="open-modal-btn" class="add-btn" aria-label="Adicionar alimento">+</button>
@@ -46,17 +46,31 @@
       </main>
     </section>
 
-    <!-- VISTA 2: RECEITAS -->
+    <!-- VISTA 2: RECEITAS COM FILTROS DE TIPO (DOCE/SALGADO) -->
     <section id="view-recipes" class="view">
       <header class="header">
-        <h1 class="greeting-title">Receitas</h1>
-        <p class="greeting-subtitle header-desc">Aproveite seus ingredientes cadastrados e evite perdas</p>
+        <h1 class="greeting-title">Receitas Sustentáveis</h1>
+        <p class="greeting-subtitle header-desc">Aproveite seus ingredientes e evite o desperdício</p>
         
-        <div class="tabs recipe-tabs">
-          <button class="tab-recipe-btn active" data-recipe-filter="todas">Todas</button>
-          <button class="tab-recipe-btn" data-recipe-filter="posso-fazer">Com meus ingredientes</button>
-          <button class="tab-recipe-btn" data-recipe-filter="vencendo">Usar itens a vencer 🔥</button>
-          <button class="tab-recipe-btn" data-recipe-filter="favoritas">Favoritas ❤️</button>
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="recipe-search-input" placeholder="Buscar por receita ou ingrediente...">
+        </div>
+
+        <!-- FILTROS DUPLOS: CATEGORIA PRINCIPAL E TIPO (DOCE / SALGADO) -->
+        <div class="filter-controls-stack">
+          <div class="tabs recipe-tabs">
+            <button class="tab-recipe-btn active" data-recipe-filter="todas">Todas</button>
+            <button class="tab-recipe-btn" data-recipe-filter="posso-fazer">Com meus itens ✔️</button>
+            <button class="tab-recipe-btn" data-recipe-filter="vencendo">Usar itens a vencer 🔥</button>
+            <button class="tab-recipe-btn" data-recipe-filter="favoritas">Favoritas ❤️</button>
+          </div>
+
+          <div class="type-pill-selector">
+            <button class="type-pill-btn active" data-type-filter="todos">🍽️ Todos os Tipos</button>
+            <button class="type-pill-btn" data-type-filter="salgado">🍕 Salgados</button>
+            <button class="type-pill-btn" data-type-filter="doce">🍰 Doces</button>
+          </div>
         </div>
       </header>
       <main class="content">
@@ -64,7 +78,7 @@
       </main>
     </section>
 
-    <!-- VISTA 3: OFERTAS (MERCADOS LOCAIS + AÇÃO DE PARCEIRO) -->
+    <!-- VISTA 3: OFERTAS (COM PESQUISA DE MERCADOS E PRODUTOS) -->
     <section id="view-offers" class="view">
       <header class="header">
         <div class="location-header-row">
@@ -80,7 +94,12 @@
         
         <h1 class="greeting-title">Ofertas Locais</h1>
         <p class="greeting-subtitle header-desc">Produtos próximos ao vencimento com desconto</p>
-        
+
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="offer-search-input" placeholder="Buscar por produto ou nome do mercado...">
+        </div>
+
         <div class="tabs offer-tabs">
           <button class="tab-offer-btn active" data-offer-filter="Todos">Todos</button>
           <button class="tab-offer-btn" data-offer-filter="Frutas e verduras">Frutas e verduras</button>
@@ -106,13 +125,24 @@
             <span class="avatar-icon" id="profile-avatar-icon">👤</span>
           </div>
           <div class="profile-details">
-            <h2 id="profile-name-display">Maria</h2>
+            <h2 id="profile-name-display">Usuário</h2>
             <span class="badge-role" id="profile-tag-display">Consumidor Consciente 🌿</span>
           </div>
           <button id="open-edit-profile-btn" class="edit-profile-icon" title="Editar Perfil">✏️</button>
         </div>
 
-        <!-- MÓDULO DO MODO VENDEDOR / PARCEIRO -->
+        <!-- MÓDULO DE PERMISSÃO DE NOTIFICAÇÕES -->
+        <div class="seller-mode-card" style="margin-bottom: 12px;">
+          <div class="seller-header">
+            <div>
+              <strong>Notificações no Celular 🔔</strong>
+              <p class="greeting-subtitle">Receba alertas nativos sobre itens perto do vencimento</p>
+            </div>
+            <button id="enable-notifications-btn" class="btn-primary btn-sm">Ativar Alertas</button>
+          </div>
+        </div>
+
+        <!-- MÓDULO DO MODO VENDEDOR -->
         <div class="seller-mode-card">
           <div class="seller-header">
             <div>
@@ -125,7 +155,6 @@
             </label>
           </div>
 
-          <!-- PAINEL DO MERCADO -->
           <div id="seller-dashboard" class="seller-dashboard hidden">
             <hr class="card-divider">
             <div class="market-info-box">
@@ -179,7 +208,7 @@
           </button>
 
           <button class="menu-item" id="open-settings-btn">
-            <span class="menu-icon">⚙️️</span>
+            <span class="menu-icon">⚙️</span>
             <span class="menu-text">Configurações</span>
             <span class="menu-arrow">›</span>
           </button>
@@ -218,7 +247,31 @@
       </button>
     </nav>
 
-    <!-- MODAL DE CADASTRO E EDIÇÃO DE ALIMENTO NO INVENTÁRIO -->
+    <!-- MODAL DE PRIMEIRO ACESSO -->
+    <div id="onboarding-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2>👋 Bem-vindo ao Menos Desperdício!</h2>
+        <p class="greeting-subtitle" style="margin-bottom: 16px;">Para começar, como gostaria de ser chamado?</p>
+        
+        <form id="onboarding-form" autocomplete="off">
+          <label for="onboarding-name">Seu Nome ou Apelido</label>
+          <input type="text" id="onboarding-name" placeholder="Ex: João Silva" required>
+
+          <label for="onboarding-tag">Tipo de Perfil</label>
+          <select id="onboarding-tag">
+            <option value="Consumidor Consciente 🌿">Consumidor Consciente 🌿</option>
+            <option value="Cozinheiro Sustentável 🍳">Cozinheiro Sustentável 🍳</option>
+            <option value="Caçador de Ofertas 🏷️">Caçador de Ofertas 🏷️</option>
+          </select>
+
+          <div class="modal-actions" style="margin-top: 20px;">
+            <button type="submit" class="btn-primary" style="width: 100%;">Começar a Usar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL DE CADASTRO E EDIÇÃO DE ALIMENTO -->
     <div id="add-modal" class="modal hidden">
       <div class="modal-content">
         <h2 id="food-modal-title">Cadastrar Alimento</h2>
@@ -334,7 +387,7 @@
       </div>
     </div>
 
-    <!-- MODAL DE CADASTRO DE ITEM EM OFERTA (SOMENTE PRODUTO) -->
+    <!-- MODAL DE CADASTRO DE ITEM EM OFERTA -->
     <div id="add-offer-modal" class="modal hidden">
       <div class="modal-content">
         <h2>🏷️ Cadastrar Produto em Promoção</h2>
@@ -435,7 +488,7 @@
         
         <div class="faq-item">
           <strong>Como funciona a contagem de dias?</strong>
-          <p>O app subtrai a data atual da data de validade cadastrada e gera os alertas coloridos automaticamente.</p>
+          <p>O app subtrai a data atual da data de validade cadastrada e gera os alertas coloridos e notificações no celular automaticamente.</p>
         </div>
 
         <div class="faq-item">
