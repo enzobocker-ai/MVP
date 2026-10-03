@@ -4,21 +4,533 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Menos Desperdício</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="mobile-container">
-    <header class="header">
-      <h1>Meus alimentos</h1>
-    </header>
+    
+    <!-- VISTA 1: INÍCIO / MEUS ALIMENTOS -->
+    <section id="view-inventory" class="view active">
+      <header class="header">
+        <div class="user-greeting">
+          <div>
+            <p class="greeting-subtitle" id="home-greeting">Olá, Maria!</p>
+            <h1 class="greeting-title">Meus alimentos</h1>
+          </div>
+          <button id="open-modal-btn" class="add-btn" aria-label="Adicionar alimento">+</button>
+        </div>
 
-    <main class="content">
-      <div id="food-list" class="food-list">
-        <!-- Os itens serão inseridos aqui via JS -->
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Buscar no inventário...">
+        </div>
+
+        <div id="alert-banner" class="alert-banner hidden">
+          <span class="alert-icon">🔔</span>
+          <span id="alert-text">Verificando validade...</span>
+        </div>
+
+        <div class="tabs">
+          <button class="tab-btn active" data-filter="Todos">Todos</button>
+          <button class="tab-btn" data-filter="Na geladeira">Na geladeira</button>
+          <button class="tab-btn" data-filter="Na despensa">Na despensa</button>
+          <button class="tab-btn" data-filter="Na fruteira">Na fruteira</button>
+        </div>
+      </header>
+
+      <main class="content">
+        <div id="food-list" class="food-list"></div>
+      </main>
+    </section>
+
+    <!-- VISTA 2: RECEITAS -->
+    <section id="view-recipes" class="view">
+      <header class="header">
+        <h1 class="greeting-title">Receitas</h1>
+        <p class="greeting-subtitle header-desc">Aproveite seus ingredientes cadastrados e evite perdas</p>
+        
+        <div class="tabs recipe-tabs">
+          <button class="tab-recipe-btn active" data-recipe-filter="todas">Todas</button>
+          <button class="tab-recipe-btn" data-recipe-filter="posso-fazer">Com meus ingredientes</button>
+          <button class="tab-recipe-btn" data-recipe-filter="vencendo">Usar itens a vencer 🔥</button>
+          <button class="tab-recipe-btn" data-recipe-filter="favoritas">Favoritas ❤️</button>
+        </div>
+      </header>
+      <main class="content">
+        <div id="recipe-list" class="recipe-grid"></div>
+      </main>
+    </section>
+
+    <!-- VISTA 3: OFERTAS (MERCADOS LOCAIS + AÇÃO DE PARCEIRO) -->
+    <section id="view-offers" class="view">
+      <header class="header">
+        <div class="location-header-row">
+          <div class="location-header">
+            <span class="loc-icon">📍</span>
+            <span class="loc-city">Florianópolis</span>
+          </div>
+          <div class="header-actions-group">
+            <button id="open-general-map-btn" class="map-toggle-btn">🗺️ Ver Mercados</button>
+            <button id="open-add-offer-modal-btn" class="partner-add-btn" style="display: none;" title="Área do Mercado Parceiro">+ Cadastrar Oferta</button>
+          </div>
+        </div>
+        
+        <h1 class="greeting-title">Ofertas Locais</h1>
+        <p class="greeting-subtitle header-desc">Produtos próximos ao vencimento com desconto</p>
+        
+        <div class="tabs offer-tabs">
+          <button class="tab-offer-btn active" data-offer-filter="Todos">Todos</button>
+          <button class="tab-offer-btn" data-offer-filter="Frutas e verduras">Frutas e verduras</button>
+          <button class="tab-offer-btn" data-offer-filter="Laticínios">Laticínios</button>
+          <button class="tab-offer-btn" data-offer-filter="Padaria">Padaria</button>
+          <button class="tab-offer-btn" data-offer-filter="Carnes e Frios">Carnes e Frios</button>
+        </div>
+      </header>
+
+      <main class="content">
+        <div id="offer-list" class="offer-grid"></div>
+      </main>
+    </section>
+
+    <!-- VISTA 4: PERFIL COM MODO VENDEDOR -->
+    <section id="view-profile" class="view">
+      <header class="header header-clean">
+        <h1 class="greeting-title">Meu Perfil</h1>
+      </header>
+      <main class="content">
+        <div class="profile-card">
+          <div class="avatar-container">
+            <span class="avatar-icon" id="profile-avatar-icon">👤</span>
+          </div>
+          <div class="profile-details">
+            <h2 id="profile-name-display">Maria</h2>
+            <span class="badge-role" id="profile-tag-display">Consumidor Consciente 🌿</span>
+          </div>
+          <button id="open-edit-profile-btn" class="edit-profile-icon" title="Editar Perfil">✏️</button>
+        </div>
+
+        <!-- MÓDULO DO MODO VENDEDOR / PARCEIRO -->
+        <div class="seller-mode-card">
+          <div class="seller-header">
+            <div>
+              <strong>Modo Estabelecimento Parceiro 🏪</strong>
+              <p class="greeting-subtitle">Cadastre seu mercado e publique ofertas com desconto</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-seller-mode">
+              <span class="slider round"></span>
+            </label>
+          </div>
+
+          <!-- PAINEL DO MERCADO -->
+          <div id="seller-dashboard" class="seller-dashboard hidden">
+            <hr class="card-divider">
+            <div class="market-info-box">
+              <div>
+                <h3 id="seller-market-name">Nome do Mercado</h3>
+                <p id="seller-market-loc" class="greeting-subtitle">Localização não informada</p>
+              </div>
+              <button id="edit-market-btn" class="btn-secondary btn-sm">Editar Mercado</button>
+            </div>
+
+            <button id="seller-add-offer-btn" class="btn-primary" style="width: 100%; margin-top: 12px;">
+              + Cadastrar Novo Item em Oferta
+            </button>
+          </div>
+        </div>
+
+        <div class="stats-card">
+          <div class="stat-item">
+            <span class="stat-value" id="stat-saved-items">0</span>
+            <span class="stat-label">Itens salvos</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value" id="stat-money-saved">R$ 0,00</span>
+            <span class="stat-label">Economizados em ofertas</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value" id="stat-recipes-count">0</span>
+            <span class="stat-label">Receitas disponíveis</span>
+          </div>
+        </div>
+
+        <div class="profile-menu">
+          <button class="menu-item nav-trigger" data-target="view-inventory">
+            <span class="menu-icon">📋</span>
+            <span class="menu-text">Meus alimentos</span>
+            <span class="menu-arrow">›</span>
+          </button>
+          
+          <button class="menu-item nav-trigger" data-target="view-recipes">
+            <span class="menu-icon">🍳</span>
+            <span class="menu-text">Minhas receitas</span>
+            <span class="menu-arrow">›</span>
+          </button>
+
+          <button class="menu-item nav-trigger" data-target="view-offers">
+            <span class="menu-icon">🏷️</span>
+            <span class="menu-text">Minhas ofertas salvas</span>
+            <span class="menu-arrow">›</span>
+          </button>
+
+          <button class="menu-item" id="open-settings-btn">
+            <span class="menu-icon">⚙️️</span>
+            <span class="menu-text">Configurações</span>
+            <span class="menu-arrow">›</span>
+          </button>
+
+          <button class="menu-item" id="open-help-btn">
+            <span class="menu-icon">❓</span>
+            <span class="menu-text">Ajuda & Dúvidas</span>
+            <span class="menu-arrow">›</span>
+          </button>
+        </div>
+
+        <div class="sustainability-card">
+          <span class="leaf-icon">🌱</span>
+          <p><strong>Juntos por um futuro mais sustentável!</strong></p>
+        </div>
+      </main>
+    </section>
+
+    <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-target="view-inventory">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Início</span>
+      </button>
+      <button class="nav-item" data-target="view-recipes">
+        <span class="nav-icon">🍳</span>
+        <span class="nav-label">Receitas</span>
+      </button>
+      <button class="nav-item" data-target="view-offers">
+        <span class="nav-icon">🏪</span>
+        <span class="nav-label">Ofertas</span>
+      </button>
+      <button class="nav-item" data-target="view-profile">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Perfil</span>
+      </button>
+    </nav>
+
+    <!-- MODAL DE CADASTRO E EDIÇÃO DE ALIMENTO NO INVENTÁRIO -->
+    <div id="add-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2 id="food-modal-title">Cadastrar Alimento</h2>
+        <form id="food-form" autocomplete="off">
+          <input type="hidden" id="edit-food-id" value="">
+
+          <label for="food-name">Nome do alimento</label>
+          <input type="text" id="food-name" placeholder="Ex: Queijo muçarela" required>
+
+          <div class="form-row">
+            <div class="form-group flex-2">
+              <label for="food-qty">Quantidade</label>
+              <input type="number" id="food-qty" min="0.1" step="any" placeholder="1" required>
+            </div>
+            <div class="form-group flex-3">
+              <label for="food-unit">Unidade</label>
+              <select id="food-unit" required>
+                <option value="un">un (unidade)</option>
+                <option value="g">g (gramas)</option>
+                <option value="kg">kg (quilos)</option>
+                <option value="ml">ml (mililitros)</option>
+                <option value="L">L (litros)</option>
+                <option value="maço">maço</option>
+                <option value="fatia">fatia</option>
+              </select>
+            </div>
+          </div>
+
+          <label for="food-expiry">Data de validade</label>
+          <input type="date" id="food-expiry" required>
+
+          <label for="food-location">Local de armazenamento</label>
+          <select id="food-location" required>
+            <option value="Na geladeira">Na geladeira</option>
+            <option value="Na despensa">Na despensa</option>
+            <option value="Na fruteira">Na fruteira</option>
+          </select>
+
+          <label for="food-icon">Categoria / Ícone</label>
+          <select id="food-icon">
+            <option value="🥬">🥬 Verdura / Folhas</option>
+            <option value="🍅">🍅 Legume / Horta</option>
+            <option value="🍌">🍌 Fruta</option>
+            <option value="🥛">🥛 Laticínio / Leite</option>
+            <option value="🧀">🧀 Queijo</option>
+            <option value="🥩">🥩 Carne / Aves</option>
+            <option value="🍞">🍞 Pão / Torradas</option>
+            <option value="🍚">🍚 Grão / Arroz</option>
+            <option value="🥚">🥚 Ovos</option>
+            <option value="🥫">🥫 Enlatados / Molhos</option>
+          </select>
+
+          <div class="modal-actions">
+            <button type="button" id="close-modal-btn" class="btn-secondary">Cancelar</button>
+            <button type="submit" class="btn-primary" id="save-food-btn">Salvar Alimento</button>
+          </div>
+        </form>
       </div>
-    </main>
+    </div>
+
+    <!-- MODAL DE CONFIGURAÇÃO DE PERFIL -->
+    <div id="profile-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2>Editar Perfil</h2>
+        <form id="profile-form">
+          <label for="edit-profile-name">Seu Nome</label>
+          <input type="text" id="edit-profile-name" required>
+
+          <label for="edit-profile-tag">Título do Perfil</label>
+          <select id="edit-profile-tag">
+            <option value="Consumidor Consciente 🌿">Consumidor Consciente 🌿</option>
+            <option value="Cozinheiro Sustentável 🍳">Cozinheiro Sustentável 🍳</option>
+            <option value="Caçador de Ofertas 🏷️">Caçador de Ofertas 🏷️</option>
+          </select>
+
+          <div class="modal-actions">
+            <button type="button" id="close-profile-modal-btn" class="btn-secondary">Cancelar</button>
+            <button type="submit" class="btn-primary">Salvar Perfil</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL DE CADASTRO DO MERCADO PARCEIRO -->
+    <div id="register-market-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2>🏪 Cadastrar Estabelecimento</h2>
+        <p class="greeting-subtitle" style="margin-bottom: 12px;">Cadastre os dados e o link de localização do seu mercado uma única vez</p>
+        
+        <form id="register-market-form" autocomplete="off">
+          <label for="market-input-name">Nome do Estabelecimento</label>
+          <input type="text" id="market-input-name" placeholder="Ex: Mercado Boa Compra" required>
+
+          <label for="market-input-bairro">Bairro / Região em Florianópolis</label>
+          <input type="text" id="market-input-bairro" placeholder="Ex: Trindade" required>
+
+          <label for="market-input-maps-link">Link do Google Maps do Mercado (URL de Compartilhamento)</label>
+          <input type="url" id="market-input-maps-link" placeholder="Ex: https://maps.app.goo.gl/..." required>
+
+          <label for="market-input-icon">Ícone do Estabelecimento</label>
+          <select id="market-input-icon">
+            <option value="🏪">🏪 Supermercado / Mercearia</option>
+            <option value="🥖">🥖 Padaria / Confeitaria</option>
+            <option value="🥩">🥩 Açougue / Casa de Carnes</option>
+            <option value="🥬">🥬 Hortifruti / Feira</option>
+          </select>
+
+          <div class="modal-actions">
+            <button type="button" id="close-register-market-modal-btn" class="btn-secondary">Cancelar</button>
+            <button type="submit" class="btn-primary">Salvar Mercado</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL DE CADASTRO DE ITEM EM OFERTA (SOMENTE PRODUTO) -->
+    <div id="add-offer-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2>🏷️ Cadastrar Produto em Promoção</h2>
+        <p class="greeting-subtitle" id="offer-modal-market-subtitle" style="margin-bottom: 12px;">Oferta vinculada ao seu mercado</p>
+        
+        <form id="partner-offer-form" autocomplete="off">
+          <label for="new-offer-title">Nome do Produto</label>
+          <input type="text" id="new-offer-title" placeholder="Ex: Queijo Muçarela 200g" required>
+
+          <div class="form-row">
+            <div class="form-group flex-2">
+              <label for="new-offer-old-price">Preço Normal (R$)</label>
+              <input type="number" id="new-offer-old-price" min="0.1" step="0.01" placeholder="9.99" required>
+            </div>
+            <div class="form-group flex-2">
+              <label for="new-offer-price">Preço Com Desconto (R$)</label>
+              <input type="number" id="new-offer-price" min="0.1" step="0.01" placeholder="4.99" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-2">
+              <label for="new-offer-validity">Data de Validade</label>
+              <input type="date" id="new-offer-validity" required>
+            </div>
+            <div class="form-group flex-2">
+              <label for="new-offer-weight">Qtd / Peso do Lote</label>
+              <input type="text" id="new-offer-weight" placeholder="Ex: 500g / 1 un" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-2">
+              <label for="new-offer-category">Categoria</label>
+              <select id="new-offer-category" required>
+                <option value="Frutas e verduras">Frutas e verduras</option>
+                <option value="Laticínios">Laticínios</option>
+                <option value="Padaria">Padaria</option>
+                <option value="Carnes e Frios">Carnes e Frios</option>
+              </select>
+            </div>
+            <div class="form-group flex-2">
+              <label for="new-offer-icon">Ícone do Produto</label>
+              <select id="new-offer-icon" required>
+                <option value="🍅">🍅 Legume / Fruta</option>
+                <option value="🥛">🥛 Laticínio</option>
+                <option value="🍞">🍞 Padaria</option>
+                <option value="🧀">🧀 Queijo / Frios</option>
+                <option value="🥩">🥩 Carnes</option>
+                <option value="🍌">🍌 Frutas</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" id="close-add-offer-modal-btn" class="btn-secondary">Cancelar</button>
+            <button type="submit" class="btn-primary">Publicar Promoção</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL DE CONFIGURAÇÕES -->
+    <div id="settings-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2>⚙️ Configurações</h2>
+        
+        <div class="setting-row">
+          <div>
+            <strong>Alertas de Validade</strong>
+            <p class="greeting-subtitle">Notificar itens a vencer em até 3 dias</p>
+          </div>
+          <input type="checkbox" id="toggle-alerts" checked>
+        </div>
+
+        <div class="setting-row">
+          <div>
+            <strong>Modo Escuro (Dark Mode)</strong>
+            <p class="greeting-subtitle">Alternar tema da interface</p>
+          </div>
+          <input type="checkbox" id="toggle-dark-mode">
+        </div>
+
+        <hr style="border:0; border-top: 1px solid var(--border-color); margin: 15px 0;">
+
+        <button type="button" id="reset-app-btn" class="btn-danger" style="width:100%;">Resetar Dados do Aplicativo</button>
+
+        <div class="modal-actions" style="margin-top: 15px;">
+          <button type="button" id="close-settings-modal-btn" class="btn-secondary">Fechar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE AJUDA & FAQ -->
+    <div id="help-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2>❓ Dúvidas Frequentes</h2>
+        
+        <div class="faq-item">
+          <strong>Como funciona a contagem de dias?</strong>
+          <p>O app subtrai a data atual da data de validade cadastrada e gera os alertas coloridos automaticamente.</p>
+        </div>
+
+        <div class="faq-item">
+          <strong>Como economizo com as Ofertas?</strong>
+          <p>Ao selecionar uma oferta de um mercado local e clicar em "Garantir Oferta", o desconto é adicionado ao seu perfil e o item vai direto para o seu estoque.</p>
+        </div>
+
+        <div class="faq-item">
+          <strong>Como cadastrar ofertas como mercado parceiro?</strong>
+          <p>Acesse seu Perfil, ative o 'Modo Estabelecimento Parceiro', cadastre seu mercado e o link do Google Maps uma vez, e depois publique suas promoções rapidamente.</p>
+        </div>
+
+        <div class="modal-actions" style="margin-top: 15px;">
+          <button type="button" id="close-help-modal-btn" class="btn-primary">Entendido</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE DETALHES DA RECEITA -->
+    <div id="recipe-modal" class="modal hidden">
+      <div class="modal-content modal-large">
+        <div class="recipe-detail-header">
+          <span id="recipe-modal-icon" class="recipe-detail-icon">🥗</span>
+          <div style="flex:1;">
+            <h2 id="recipe-modal-title">Nome da Receita</h2>
+            <p id="recipe-modal-meta" class="recipe-meta-text">⏱️ 15 min • Fácil</p>
+          </div>
+          <button id="recipe-modal-fav-btn" class="fav-btn-large">🤍</button>
+        </div>
+
+        <div class="recipe-section">
+          <h3>Ingredientes necessários</h3>
+          <p class="recipe-tip">Marcamos com ✔️ o que você já tem no estoque:</p>
+          <ul id="recipe-modal-ingredients" class="ingredients-list"></ul>
+        </div>
+
+        <div class="recipe-section">
+          <h3>Modo de preparo</h3>
+          <ol id="recipe-modal-steps" class="steps-list"></ol>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" id="close-recipe-modal-btn" class="btn-primary">Fechar Receita</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE DETALHES DA OFERTA -->
+    <div id="offer-modal" class="modal hidden">
+      <div class="modal-content">
+        <div class="offer-modal-header">
+          <span id="offer-modal-icon" class="offer-modal-icon">🍅</span>
+          <div>
+            <h2 id="offer-modal-title">Nome do Produto</h2>
+            <p id="offer-modal-market" class="offer-market-text">Mercado Boa Compra</p>
+          </div>
+        </div>
+
+        <div class="price-box">
+          <span id="offer-modal-price" class="current-price">R$ 2,99</span>
+          <span id="offer-modal-old-price" class="old-price">R$ 4,99</span>
+          <span id="offer-modal-discount" class="discount-tag">-40%</span>
+        </div>
+
+        <div class="offer-info-list">
+          <p><strong>📍 Localização:</strong> <span id="offer-modal-dist">1,2 km</span></p>
+          <p><strong>📅 Validade:</strong> <span id="offer-modal-validity">20/10/2026</span></p>
+          <p><strong>📦 Peso/Qtd:</strong> <span id="offer-modal-weight">Aproximadamente 500g</span></p>
+        </div>
+
+        <button type="button" id="open-single-offer-map-btn" class="btn-secondary map-btn">🗺️ Ver no Google Maps</button>
+
+        <div class="modal-actions">
+          <button type="button" id="close-offer-modal-btn" class="btn-secondary">Voltar</button>
+          <button type="button" id="buy-offer-btn" class="btn-primary">Garantir Oferta e Adicionar ao Estoque</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE LISTA DE MERCADOS E ROTAS -->
+    <div id="map-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2>📍 Mercados Parceiros em Florianópolis</h2>
+        <p class="greeting-subtitle" style="margin-bottom: 14px;">Selecione o mercado parceiro para abrir a rota no Google Maps:</p>
+        
+        <div id="map-markets-container" class="markets-list-grid"></div>
+
+        <div class="modal-actions" style="margin-top: 16px;">
+          <button type="button" id="close-map-modal-btn" class="btn-primary">Fechar</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <script type="module" src="js/inventory.js"></script>
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>
