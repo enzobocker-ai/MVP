@@ -1,3 +1,5 @@
+/* style.css */
+
 :root {
   --primary: #2d6a4f;
   --primary-dark: #1b4332;
@@ -14,6 +16,19 @@
   --success-color: #2e7d32;
   --discount-bg: #2e7d32;
   --discount-text: #ffffff;
+  
+  /* NOVAS CORES (Adicionadas sem mexer nas suas) */
+  --youtube-red: #ff0000;
+  --website-blue: #2563eb;
+}
+
+/* TEMA DO MODO LOJISTA (Azul Profissional estilo Binance/Conta Comercial) */
+body.seller-theme {
+  --primary: #1e3a8a;
+  --primary-dark: #0f172a;
+  --primary-light: #eff6ff;
+  --accent: #3b82f6;
+  --discount-bg: #ea580c;
 }
 
 /* TEMA ESCURO COM ALTO CONTRASTE */
@@ -35,6 +50,14 @@ body.dark-theme {
   --discount-text: #ffffff;
 }
 
+/* TEMA ESCURO + LOJISTA */
+body.dark-theme.seller-theme {
+  --primary: #3b82f6;
+  --primary-dark: #bfdbfe;
+  --primary-light: #1e293b;
+  --discount-bg: #f97316;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -50,6 +73,26 @@ body {
   align-items: center;
   min-height: 100vh;
 }
+
+/* TELA DE TRANSIÇÃO (TIPO INSTAGRAM/BINANCE SWITCH) */
+.switch-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: var(--bg-app); z-index: 99999;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  transition: opacity 0.2s ease;
+}
+
+.switch-overlay.hidden { display: none; opacity: 0; }
+
+.spinner {
+  width: 44px; height: 44px; border: 4px solid var(--border-color);
+  border-top: 4px solid var(--primary); border-radius: 50%;
+  animation: spin 0.8s linear infinite; margin-bottom: 16px;
+}
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+#switch-overlay-text { font-size: 15px; font-weight: 700; color: var(--text-main); }
 
 /* ESTRUTURA FIXA DO MÓVEL (SEM ROLAGEM GLOBAL) */
 .mobile-container {
@@ -150,7 +193,7 @@ body {
 }
 
 .add-btn {
-  background: linear-gradient(135deg, #2d6a4f, #1b4332);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: #fff;
   border: none;
   width: 42px;
@@ -162,6 +205,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  line-height: 1;
+  padding: 0;
+  padding-bottom: 3px;
+  transition: transform 0.2s;
+}
+
+.add-btn:active {
+  transform: scale(0.92);
 }
 
 /* PESQUISA & ABAS */
@@ -247,13 +298,19 @@ body.dark-theme .tab-btn, body.dark-theme .tab-recipe-btn, body.dark-theme .tab-
 /* CARTÕES DE INVENTÁRIO */
 .food-card {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   background: var(--bg-card);
   padding: 14px 16px;
   border-radius: 16px;
   margin-bottom: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
   border: 1px solid var(--border-color);
+}
+
+.food-card-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
 }
 
 .food-icon {
@@ -385,7 +442,7 @@ body.dark-theme .avail-partial { background: #3d2c1d; }
 .avatar-container {
   width: 58px;
   height: 58px;
-  background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+  background: linear-gradient(135deg, var(--primary-light), #c8e6c9);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -608,29 +665,6 @@ body.dark-theme .btn-secondary { background: #2d3748; }
 .ing-check.missing { color: var(--danger-color); font-weight: 700; }
 .steps-list { padding-left: 20px; font-size: 13px; color: var(--text-main); }
 .steps-list li { margin-bottom: 8px; line-height: 1.4; }
-.add-btn {
-  background: linear-gradient(135deg, #2d6a4f, #1b4332);
-  color: #fff;
-  border: none;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  font-size: 26px;
-  font-weight: 400;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  padding: 0;
-  padding-bottom: 3px;
-  transition: transform 0.2s;
-}
-
-.add-btn:active {
-  transform: scale(0.92);
-}
 
 .markets-list-grid {
   display: flex;
@@ -692,6 +726,7 @@ body.dark-theme .btn-secondary { background: #2d3748; }
 .partner-add-btn:active {
   transform: scale(0.95);
 }
+
 /* CARTÃO E SWITCH DO MODO VENDEDOR */
 .seller-mode-card {
   background: var(--bg-card);
@@ -784,6 +819,7 @@ input:checked + .slider {
 input:checked + .slider:before {
   transform: translateX(22px);
 }
+
 /* FILTROS ADICIONAIS DE RECEITAS (DOCE / SALGADO) */
 .filter-controls-stack {
   display: flex;
@@ -827,3 +863,175 @@ body.dark-theme .type-pill-btn.active {
   background: var(--primary-light);
   color: var(--primary);
 }
+
+/* Botões do Modal de Receitas (YouTube e Site Oficial) */
+.btn-youtube, .btn-website {
+  flex: 1; 
+  padding: 14px; 
+  border: none; 
+  border-radius: 12px; 
+  font-weight: 700; 
+  cursor: pointer; 
+  font-size: 13px;
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  gap: 8px; 
+  text-decoration: none;
+}
+.btn-youtube { background: var(--youtube-red); color: #fff; }
+.btn-website { background: var(--website-blue); color: #fff; }
+
+/* Overlay e Cartão da Tela Inicial (Modo Consumidor / Lojista) */
+.onboarding-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.onboarding-card {
+  background: var(--bg-card);
+  width: 100%;
+  padding: 36px 24px;
+  border-radius: 24px;
+  text-align: center;
+  color: var(--text-main);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+}
+
+.tutorial-icon { font-size: 64px; margin-bottom: 16px; }
+.onboarding-card h2 { font-size: 22px; margin-bottom: 10px; color: var(--text-main); font-weight: 700; }
+.onboarding-card p { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+/* ======================================================= */
+/* NOVAS CLASSES: AGRUPAMENTO, ESTOQUE E BANCO DE ALIMENTOS*/
+/* ======================================================= */
+
+/* Agrupamento de Itens Repetidos no Inventário */
+.food-group-wrapper {
+  background: var(--bg-card);
+  border-radius: 16px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+}
+
+.food-group-header {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.food-group-header:active { background: var(--bg-app); }
+
+.food-group-content {
+  display: none;
+  flex-direction: column;
+  padding: 0 16px 14px 16px;
+  gap: 8px;
+}
+
+.food-group-content.expanded {
+  display: flex;
+}
+
+.sub-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-app);
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+body.dark-theme .sub-item-row { background: var(--primary-light); }
+
+.sub-item-info { display: flex; flex-direction: column; gap: 4px; }
+.sub-item-actions { display: flex; gap: 8px; }
+
+.expand-icon {
+  margin-left: auto;
+  font-size: 18px;
+  color: var(--text-muted);
+  transition: transform 0.3s ease;
+}
+.expand-icon.rotated { transform: rotate(180deg); }
+
+/* Sistema de Autocomplete no Cadastro de Alimentos */
+.autocomplete-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.autocomplete-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: none;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  margin-top: 4px;
+}
+
+.autocomplete-list.visible { display: block; }
+
+.autocomplete-category {
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--bg-app);
+}
+body.dark-theme .autocomplete-category { background: var(--primary-dark); }
+
+.autocomplete-item {
+  padding: 12px;
+  font-size: 13px;
+  color: var(--text-main);
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-color);
+}
+.autocomplete-item:last-child { border-bottom: none; }
+.autocomplete-item:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Badge de Estoque no Modo Vendedor */
+.stock-badge {
+  font-size: 11px;
+  background: var(--warning-color);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-weight: 800;
+  display: inline-block;
+  margin-top: 6px;
+}
+
+/* Isolamento Rigoroso de Menus */
+.seller-nav { display: none !important; }
+.consumer-nav { display: flex !important; }
+
+body.seller-theme .seller-nav { display: flex !important; }
+body.seller-theme .consumer-nav { display: none !important; }
+
+.bottom-nav { width: 100%; justify-content: space-around; align-items: center; }
